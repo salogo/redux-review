@@ -1,26 +1,45 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { connect } from "react-redux";
+import { useState } from "react";
+import * as actionCreators from "./actionCreator";
+import * as actionTypes from "./actionTypes";
+import MovieList from './MovieList';
 
-function App() {
+
+
+function App(props) {
+
+const [movieName , setMovieName ] = useState("")
+
+const handleTexBoxChange = (e) => {
+     setMovieName(e.target.value)
+}
+const handleAddMovie = () => {
+  props.onAddMovie(movieName)
+}
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <p>{props.ctr}</p>
+      <button onClick={()=> props.onIncrement()}>Increment</button>
+      <input type="text" placeholder="movie name" name="movie" onChange={handleTexBoxChange} />
+      <button onClick={()=> handleAddMovie()} >Add Movie</button>
+     <MovieList />
     </div>
   );
 }
 
-export default App;
+const mapStateToProps =(state)=>{
+    return {
+      ctr: state.counter
+    }
+}
+const mapDispatchToProps =(dispatch)=>{
+   return {
+     onIncrement : ()=> dispatch(actionCreators.incrementCounter()),
+     onAddMovie : (nameOfMovie)=> dispatch({type:actionTypes.ADD_MOVIE,payload: {name:nameOfMovie}})
+   }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps ) (App);
